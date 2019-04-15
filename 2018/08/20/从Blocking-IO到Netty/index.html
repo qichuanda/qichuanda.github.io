@@ -1,0 +1,1471 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Netty," />
+
+
+
+
+
+
+
+
+
+
+<meta name="keywords" content="Netty">
+<meta property="og:type" content="article">
+<meta property="og:title" content="从Blocking IO到Netty">
+<meta property="og:url" content="https://qianjiangtao.github.io/2018/08/20/从Blocking-IO到Netty/index.html">
+<meta property="og:site_name" content="博观而约取">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://gitee.com/qianjiangtao/my-image/raw/master/blog/2018-11-1-13-53.jpg">
+<meta property="og:image" content="https://gitee.com/qianjiangtao/my-image/raw/master/netty/1533804294939.png">
+<meta property="og:image" content="https://gitee.com/qianjiangtao/my-image/raw/master/netty/1533805485678.png">
+<meta property="og:image" content="https://gitee.com/qianjiangtao/my-image/raw/master/netty/1533542628395.png">
+<meta property="og:image" content="https://gitee.com/qianjiangtao/my-image/raw/master/netty/1533803264589.png">
+<meta property="og:image" content="https://gitee.com/qianjiangtao/my-image/raw/master/netty/1533803458742.png">
+<meta property="og:image" content="https://gitee.com/qianjiangtao/my-image/raw/master/netty/1533706739903.png">
+<meta property="og:image" content="https://gitee.com/qianjiangtao/my-image/raw/master/netty/1533706701978.png">
+<meta property="og:image" content="https://gitee.com/qianjiangtao/my-image/raw/master/netty/1533706683066.png">
+<meta property="og:image" content="https://gitee.com/qianjiangtao/my-image/raw/master/netty/1533708939020.png">
+<meta property="og:image" content="https://gitee.com/qianjiangtao/my-image/raw/master/netty/1533609953205.png">
+<meta property="og:image" content="https://gitee.com/qianjiangtao/my-image/raw/master/netty/1533609672952.png">
+<meta property="og:image" content="https://gitee.com/qianjiangtao/my-image/raw/master/netty/1533609953205.png">
+<meta property="og:image" content="https://gitee.com/qianjiangtao/my-image/raw/master/netty/1533639418644.png">
+<meta property="og:image" content="https://gitee.com/qianjiangtao/my-image/raw/master/netty/1533802328665.png">
+<meta property="og:image" content="https://gitee.com/qianjiangtao/my-image/raw/master/netty/1533727591233.png">
+<meta property="og:image" content="https://gitee.com/qianjiangtao/my-image/raw/master/netty/1533727621475.png">
+<meta property="og:image" content="https://gitee.com/qianjiangtao/my-image/raw/master/netty/3751588-ef0937cfe9e39b2d.png">
+<meta property="og:image" content="https://gitee.com/qianjiangtao/my-image/raw/master/netty/1533784434576.png">
+<meta property="og:updated_time" content="2018-11-01T06:02:04.143Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="从Blocking IO到Netty">
+<meta name="twitter:image" content="https://gitee.com/qianjiangtao/my-image/raw/master/blog/2018-11-1-13-53.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://qianjiangtao.github.io/2018/08/20/从Blocking-IO到Netty/"/>
+
+
+
+
+
+  <title>从Blocking IO到Netty | 博观而约取</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">博观而约取</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">今天不走，明天要跑</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="搜索..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://qianjiangtao.github.io/2018/08/20/从Blocking-IO到Netty/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="qianjiangtao">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/0U1422448-2.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="博观而约取">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">从Blocking IO到Netty</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-08-20T18:54:09+08:00">
+                2018-08-20
+              </time>
+            
+
+            
+              <span class="post-meta-divider">|</span>
+            
+
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-check-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">更新于&#58;</span>
+              
+              <time title="更新于" itemprop="dateModified" datetime="2018-11-01T14:02:04+08:00">
+                2018-11-01
+              </time>
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Netty/" itemprop="url" rel="index">
+                    <span itemprop="name">Netty</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2,839字
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  12分钟
+                </span>
+              
+            </div>
+          
+
+          
+		  
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><img src="https://gitee.com/qianjiangtao/my-image/raw/master/blog/2018-11-1-13-53.jpg" alt=""></p>
+<a id="more"></a>
+<h2 id="一-Java-Blocking-I-O"><a href="#一-Java-Blocking-I-O" class="headerlink" title="一. Java Blocking I/O"></a>一. Java Blocking I/O</h2><p><img src="https://gitee.com/qianjiangtao/my-image/raw/master/netty/1533804294939.png" alt="1533804294939"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    ExecutorService executor = Excutors.newFixedThreadPollExecutor(<span class="number">100</span>);<span class="comment">//线程池</span></span><br><span class="line"></span><br><span class="line">    ServerSocket serverSocket = <span class="keyword">new</span> ServerSocket();</span><br><span class="line">    serverSocket.bind(<span class="number">8088</span>);</span><br><span class="line">    <span class="keyword">while</span>(!Thread.currentThread.isInturrupted())&#123;<span class="comment">//主线程死循环等待新连接到来</span></span><br><span class="line">        Socket socket = serverSocket.accept();<span class="comment">//blocking</span></span><br><span class="line">        executor.submit(<span class="keyword">new</span> ConnectIOnHandler(socket));<span class="comment">//为新的连接创建新的线程</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="class"><span class="keyword">class</span> <span class="title">ConnectIOnHandler</span> <span class="keyword">extends</span> <span class="title">Thread</span></span>&#123;</span><br><span class="line">        <span class="keyword">private</span> Socket socket;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="title">ConnectIOnHandler</span><span class="params">(Socket socket)</span></span>&#123;</span><br><span class="line">            <span class="keyword">this</span>.socket = socket;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span></span>&#123;</span><br><span class="line">            <span class="keyword">while</span>(!Thread.currentThread.isInturrupted()&amp;&amp;!socket.isClosed())&#123;死循环处理读写事件</span><br><span class="line">                String someThing = socket.read()....<span class="comment">//读取数据(blocking)</span></span><br><span class="line">                <span class="keyword">if</span>(someThing!=<span class="keyword">null</span>)&#123;</span><br><span class="line">                    ......<span class="comment">//处理数据</span></span><br><span class="line">                        socket.write()....<span class="comment">//写数据</span></span><br><span class="line">                &#125;</span><br><span class="line">                                                                            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+<p><strong>不足:</strong></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">1、线程的创建和销毁成本很高</span><br><span class="line">2、线程的切换成本是很高</span><br><span class="line">3、线程数量过多,使系统负载压力过大。</span><br><span class="line">4、没有充分利用多核CPU</span><br></pre></td></tr></table></figure>
+<h2 id="二-Java-NO-Blocking-I-O-or-New-I-O"><a href="#二-Java-NO-Blocking-I-O-or-New-I-O" class="headerlink" title="二. Java NO Blocking I/O or New I/O"></a>二. Java NO Blocking I/O or New I/O</h2><p><img src="https://gitee.com/qianjiangtao/my-image/raw/master/netty/1533805485678.png" alt="1533805485678"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">    <span class="comment">//无事件到底阻塞</span></span><br><span class="line">    selector.select();</span><br><span class="line">    Iterator&lt;SelectionKey&gt; keys = <span class="keyword">this</span>.selector.selectedKeys().iterator();</span><br><span class="line">    <span class="keyword">while</span> (keys.hasNext()) &#123;</span><br><span class="line">        SelectionKey key = keys.next();</span><br><span class="line">        keys.remove();</span><br><span class="line">        handler(key);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 处理不同事件的请求</span></span><br><span class="line"><span class="comment">  * <span class="doctag">@param</span> key</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">handler</span><span class="params">(SelectionKey key)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (key.isAcceptable()) &#123;</span><br><span class="line">        handleAccept(key);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (key.isReadable()) &#123;</span><br><span class="line">        handleRead(key);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//处理连接请求</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">handleAccept</span><span class="params">(SelectionKey key)</span></span>&#123;</span><br><span class="line">	...</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">//处理读操作</span></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">handleRead</span><span class="params">(SelectionKey key)</span></span>&#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>NIO</code>和 <code>BIO</code>的对比</p>
+<ul>
+<li>IO 基于流(Stream oriented), 而 NIO 基于 Buffer (Buffer oriented)</li>
+<li>IO 操作是阻塞的, 而 NIO 操作是非阻塞的</li>
+<li>IO 没有 selector 概念, 而 NIO 有 selector 概念.</li>
+</ul>
+<h2 id="三-Java-Netty"><a href="#三-Java-Netty" class="headerlink" title="三. Java Netty"></a>三. Java Netty</h2><p><img src="https://gitee.com/qianjiangtao/my-image/raw/master/netty/1533542628395.png" alt="1533542628395"></p>
+<p>​                                        Netty工作原理                    </p>
+<p>​        </p>
+<h3 id="3-1-Netty基于服务端例子"><a href="#3-1-Netty基于服务端例子" class="headerlink" title="3.1 Netty基于服务端例子"></a>3.1 Netty基于服务端例子</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">startServer</span><span class="params">()</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">    <span class="comment">//创建boss接收进来的连接</span></span><br><span class="line">    EventLoopGroup boss = <span class="keyword">new</span> NioEventLoopGroup();</span><br><span class="line">    <span class="comment">//创建worker处理已经接收的连接</span></span><br><span class="line">    EventLoopGroup worker = <span class="keyword">new</span> NioEventLoopGroup();</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">//创建nio辅助启动类</span></span><br><span class="line">        ServerBootstrap bootstrap = <span class="keyword">new</span> ServerBootstrap();</span><br><span class="line">        bootstrap.group(boss, worker).channel(NioServerSocketChannel.class)</span><br><span class="line">            .childHandler(<span class="keyword">new</span> ChannelInitializer&lt;SocketChannel&gt;() &#123;</span><br><span class="line">                <span class="meta">@Override</span></span><br><span class="line">                <span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">initChannel</span><span class="params">(SocketChannel channel)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">                    channel.pipeline().addLast(<span class="keyword">new</span> EchoServerHandler());</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">        <span class="comment">//绑定端口准备接收进来的连接</span></span><br><span class="line">        ChannelFuture future = bootstrap.bind(port).sync();</span><br><span class="line">        <span class="comment">//等待服务器socket关闭</span></span><br><span class="line">        future.channel().closeFuture().sync();</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        boss.shutdownGracefully();</span><br><span class="line">        worker.shutdownGracefully();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="3-2-Netty核心组件"><a href="#3-2-Netty核心组件" class="headerlink" title="3.2 Netty核心组件"></a>3.2 Netty核心组件</h3><h4 id="3-2-1Bootstrap-和-ServerBootstrap"><a href="#3-2-1Bootstrap-和-ServerBootstrap" class="headerlink" title="3.2.1Bootstrap 和 ServerBootstrap"></a>3.2.1<code>Bootstrap 和 ServerBootstrap</code></h4><p>Bootstrapping 有两种类型，一种是用于客户端的Bootstrap，一种是用于服务端的<code>ServerBootstrap</code></p>
+<table>
+<thead>
+<tr>
+<th>分类</th>
+<th>Bootstrap</th>
+<th>ServerBootstrap</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>网络功能</td>
+<td>连接到远程主机和端口</td>
+<td>绑定本地端口</td>
+</tr>
+<tr>
+<td>EventLoopGroup 数量</td>
+<td>1</td>
+<td>2</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li><strong>Bootstrap如何引导客户端:</strong> </li>
+</ul>
+<p><img src="https://gitee.com/qianjiangtao/my-image/raw/master/netty/1533803264589.png" alt="1533803264589"></p>
+<p>​    1.当 bind() 调用时，Bootstrap 将创建一个新的管道, 当 connect() 调用在 Channel 来建立连接</p>
+<p>​    2.Bootstrap 将创建一个新的管道, 当 connect() 调用时</p>
+<p>​    3.新的 Channel </p>
+<ul>
+<li><strong>ServerBootstrap如何引导服务端:</strong></li>
+</ul>
+<p><img src="https://gitee.com/qianjiangtao/my-image/raw/master/netty/1533803458742.png" alt="1533803458742"></p>
+<p>1.当调用 bind() 后 ServerBootstrap 将创建一个新的管道，这个管道将会在绑定成功后接收子管道</p>
+<p>2.接收新连接给每个子管道</p>
+<p>3.接收连接的 Channel</p>
+<h4 id="3-2-2-EventLoopGroup"><a href="#3-2-2-EventLoopGroup" class="headerlink" title="3.2.2 EventLoopGroup"></a>3.2.2 <code>EventLoopGroup</code></h4><p>Netty 中<code>EventLoopGroup</code>是 Reactor 模型的一个实现</p>
+<blockquote>
+<p>什么是Reactor呢？可以这样理解，Reactor就是一个执行while (true) { selector.select(); …}循环的线程，会源源不断的产生新的事件，称作反应堆很贴切。 事件又分为连接事件、IO读和IO写事件，一般把连接事件单独放一线程里处理，即主Reactor（MainReactor），IO读和IO写事件放到另外的一组线程里处理，即从Reactor（SubReactor），从Reactor线程数量一般为2*(CPUs - 1)。 所以在运行时，MainReactor只处理Accept事件，连接到来，马上按照策略转发给从Reactor之一，只处理连接，故开销非常小；每个SubReactor管理多个连接，负责这些连接的读和写，属于IO密集型线程，读到完整的消息就丢给业务线程池处理业务，处理完比后，响应消息一般放到队列里，SubReactor会去处理队列，然后将消息写回。 </p>
+</blockquote>
+<p>Reactor单线程模型：</p>
+<p><img src="https://gitee.com/qianjiangtao/my-image/raw/master/netty/1533706739903.png" alt="1533694965091"></p>
+<blockquote>
+<p>所谓单线程, 即 acceptor 处理和 handler 处理都在一个线程中处理. 这个模型的坏处显而易见: 当其中某个 handler 阻塞时, 会导致其他所有的 client 的 handler 都得不到执行, 并且更严重的是, handler 的阻塞也会导致整个服务不能接收新的 client 请求(因为 acceptor 也被阻塞了). 因为有这么多的缺陷, 因此单线程Reactor 模型用的比较少. </p>
+</blockquote>
+<p>Reactor多线程模型:</p>
+<p><img src="https://gitee.com/qianjiangtao/my-image/raw/master/netty/1533706701978.png" alt="1533706701978"></p>
+<p>​    </p>
+<ul>
+<li>有专门一个线程, 即 Acceptor 线程用于监听客户端的TCP连接请求.</li>
+<li>客户端连接的 IO 操作都是由一个特定的 NIO 线程池负责. 每个客户端连接都与一个特定的 NIO 线程绑定, 因此在这个客户端连接中的所有 IO 操作都是在同一个线程中完成的.</li>
+<li>1个NIO线程可以同时处理N条链路，但是1个链路只对应1个NIO线程，防止发生并发操作问题。 </li>
+</ul>
+<p> Reactor主从多线程模型</p>
+<p><img src="https://gitee.com/qianjiangtao/my-image/raw/master/netty/1533706683066.png" alt="1533706683066"></p>
+<ul>
+<li>从主线程池中随机选择一个Reactor线程作为Acceptor线程，用于绑定监听端口，接收客户端连接；</li>
+<li>Acceptor线程接收客户端连接请求之后创建新的<code>SocketChannel</code>，将其注册到主线程池的其它Reactor线程上，由其负责接入认证、IP黑白名单过滤、握手等操作；</li>
+<li>步骤2完成之后，业务层的链路正式建立，将<code>SocketChannel</code>从主线程池的Reactor线程的多路复用器上摘除，重新注册到NIO线程池的线程上，用于处理I/O的读写操作。</li>
+</ul>
+<p>注意:</p>
+<blockquote>
+<p>服务器端的<code>ServerSocketChannel</code> 只绑定到了<code>bossGroup</code> 中的一个线程, 因此在调用<code>Java NIO</code> 的 Selector.select 处理客户端的连接请求时, 实际上是在一个线程中的, 所以对只有一个服务的应用来说, <code>bossGroup</code>设置多个线程是没有什么作用的, 反而还会造成资源浪费. </p>
+</blockquote>
+<p><code>NioEventLoopGroup</code> 与 Reactor 线程模型的对应</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//单线程模型</span></span><br><span class="line">EventLoopGroup bossGroup = <span class="keyword">new</span> NioEventLoopGroup(<span class="number">1</span>);</span><br><span class="line">ServerBootstrap b = <span class="keyword">new</span> ServerBootstrap();</span><br><span class="line">b.group(bossGroup)</span><br><span class="line"> .channel(NioServerSocketChannel.class)</span><br><span class="line"> ...</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//多线程模型</span></span><br><span class="line">EventLoopGroup bossGroup = <span class="keyword">new</span> NioEventLoopGroup(<span class="number">1</span>);</span><br><span class="line">EventLoopGroup workerGroup = <span class="keyword">new</span> NioEventLoopGroup();</span><br><span class="line">ServerBootstrap b = <span class="keyword">new</span> ServerBootstrap();</span><br><span class="line">b.group(bossGroup, workerGroup)</span><br><span class="line"> .channel(NioServerSocketChannel.class)</span><br><span class="line"> ...</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//主从多线程模型</span></span><br><span class="line">EventLoopGroup bossGroup = <span class="keyword">new</span> NioEventLoopGroup(<span class="number">4</span>);</span><br><span class="line">EventLoopGroup workerGroup = <span class="keyword">new</span> NioEventLoopGroup();</span><br><span class="line">ServerBootstrap b = <span class="keyword">new</span> ServerBootstrap();</span><br><span class="line">b.group(bossGroup, workerGroup)</span><br><span class="line"> .channel(NioServerSocketChannel.class)</span><br><span class="line"> ...</span><br></pre></td></tr></table></figure>
+<h4 id="3-2-3-EventLoop"><a href="#3-2-3-EventLoop" class="headerlink" title="3.2.3 EventLoop"></a>3.2.3 <code>EventLoop</code></h4><p><img src="https://gitee.com/qianjiangtao/my-image/raw/master/netty/1533708939020.png" alt="1533708939020"></p>
+<p><code>NioEventLoop</code>主要干两件事:</p>
+<ol>
+<li><p>IO 事件的处理</p>
+<ol>
+<li>作为服务端Acceptor线程，负责处理客户端的请求接入；</li>
+<li>作为客户端Connecor线程，负责注册监听连接操作位，用于判断异步连接结果；</li>
+<li>作为IO线程，监听网络读操作位，负责从SocketChannel中读取报文；</li>
+<li>作为IO线程，负责向SocketChannel写入报文发送给对方，如果发生写半包，会自动注册监听写事件，用于后续继续发送半包数据，直到数据全部发送完成；</li>
+</ol>
+</li>
+<li><p>非IO任务</p>
+<p>1.作为定时任务线程，可以执行定时任务，例如链路空闲检测和发送心跳消息等；</p>
+<p>2.作为线程执行器可以执行普通的任务线程（Runnable）。</p>
+</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//为了保证定时任务的执行不会因为过度挤占IO事件的处理，Netty提供了IO执行比例供用户设置，用户可以设置分</span></span><br><span class="line"><span class="comment">//配给IO的执行比例，防止因为海量定时任务的执行导致IO处理超时或者积压。默认是1:1</span></span><br><span class="line"><span class="keyword">final</span> <span class="keyword">int</span> ioRatio = <span class="keyword">this</span>.ioRatio;<span class="comment">//默认为50</span></span><br><span class="line"><span class="keyword">if</span> (ioRatio == <span class="number">100</span>) &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        processSelectedKeys();</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="comment">// Ensure we always run tasks.</span></span><br><span class="line">        runAllTasks();</span><br><span class="line">    &#125;</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">final</span> <span class="keyword">long</span> ioStartTime = System.nanoTime();</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        processSelectedKeys();</span><br><span class="line">    &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">        <span class="comment">// Ensure we always run tasks.</span></span><br><span class="line">        <span class="keyword">final</span> <span class="keyword">long</span> ioTime = System.nanoTime() - ioStartTime;</span><br><span class="line">        runAllTasks(ioTime * (<span class="number">100</span> - ioRatio) / ioRatio);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="3-2-4-Channel，ChannelHandler，ChannelPipeline，ChannelHandlerContext"><a href="#3-2-4-Channel，ChannelHandler，ChannelPipeline，ChannelHandlerContext" class="headerlink" title="3.2.4 Channel，ChannelHandler，ChannelPipeline，ChannelHandlerContext"></a>3.2.4 Channel，<code>ChannelHandler</code>，<code>ChannelPipeline</code>，<code>ChannelHandlerContext</code></h4><p><img src="https://gitee.com/qianjiangtao/my-image/raw/master/netty/1533609953205.png" alt="1533623370057"></p>
+<ul>
+<li>事件传播1：从<code>Channel</code> 或者 <code>ChannelPipeline</code>进行事件传播会把事件在整个管道中传播如下</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">hannelHandlerContext ctx = context;</span><br><span class="line">ChannelPipeline pipeline = ctx.pipeline(); <span class="comment">//1</span></span><br><span class="line">pipeline.write(Unpooled.copiedBuffer(<span class="string">"Netty in Action"</span>, CharsetUtil.UTF_8));</span><br></pre></td></tr></table></figure>
+<p><img src="https://gitee.com/qianjiangtao/my-image/raw/master/netty/1533609672952.png" alt="1533609672952"></p>
+<ul>
+<li>事件传播2：从特定的 <code>ChannelHandler</code>进行事件传播如下：</li>
+</ul>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ChannelHandlerContext ctx = context;</span><br><span class="line">ctx.write(Unpooled.copiedBuffer(<span class="string">"Netty in Action"</span>,CharsetUtil.UTF_8));</span><br></pre></td></tr></table></figure>
+<p><img src="https://gitee.com/qianjiangtao/my-image/raw/master/netty/1533609953205.png" alt="1533609953205"></p>
+<ul>
+<li>更为详细的事件传播：<code>ChannelInboundHandler</code>和<code>ChannelOutboundHandler</code>入站和出站处理</li>
+</ul>
+<p><img src="https://gitee.com/qianjiangtao/my-image/raw/master/netty/1533639418644.png" alt="1533639418644"></p>
+<h2 id="四-高性能Netty"><a href="#四-高性能Netty" class="headerlink" title="四.高性能Netty"></a>四.高性能Netty</h2><h3 id="4-1-非阻塞事件驱动框架"><a href="#4-1-非阻塞事件驱动框架" class="headerlink" title="4.1.非阻塞事件驱动框架"></a>4.1.非阻塞事件驱动框架</h3><blockquote>
+<p>Netty的IO线程<code>NioEventLoop</code>由于聚合了多路复用器Selector，可以同时并发处理成百上千个客户端Channel，由于读写操作都是非阻塞的，这就可以充分提升IO线程的运行效率，避免由于频繁IO阻塞导致的线程挂起。</p>
+</blockquote>
+<h3 id="4-2-零拷贝"><a href="#4-2-零拷贝" class="headerlink" title="4.2 零拷贝"></a>4.2 零拷贝</h3><p><img src="https://gitee.com/qianjiangtao/my-image/raw/master/netty/1533802328665.png" alt="1533802328665"></p>
+<blockquote>
+<p>Netty的接收和发送<code>ByteBuffer</code>采用DIRECT BUFFERS，直接使用堆外直接内存进行Socket读写。</p>
+</blockquote>
+<h4 id="4-2-2-聚合零拷贝"><a href="#4-2-2-聚合零拷贝" class="headerlink" title="4.2.2 聚合零拷贝"></a>4.2.2 聚合零拷贝</h4><p><img src="https://gitee.com/qianjiangtao/my-image/raw/master/netty/1533727591233.png" alt="1533727591233"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ByteBuf header = ...</span><br><span class="line">ByteBuf body = ...</span><br><span class="line"></span><br><span class="line">CompositeByteBuf compositeByteBuf = Unpooled.compositeBuffer();</span><br><span class="line">compositeByteBuf.addComponents(<span class="keyword">true</span>, header, body);</span><br></pre></td></tr></table></figure>
+<p><em>虽然看起来 <code>CompositeByteBuf</code> 是由两个 <code>ByteBuf</code> 组合而成的, 不过在 <code>CompositeByteBuf</code>内部, 这两个 <code>ByteBuf</code> 都是单独存在的, <code>CompositeByteBuf</code> 只是逻辑上是一个整体.</em> 如下：</p>
+<h4 id="4-2-3-通过CompositeByteBuf-实现零拷贝（分解）"><a href="#4-2-3-通过CompositeByteBuf-实现零拷贝（分解）" class="headerlink" title="4.2.3 通过CompositeByteBuf 实现零拷贝（分解）"></a>4.2.3 通过<code>CompositeByteBuf</code> 实现零拷贝（分解）</h4><p><img src="https://gitee.com/qianjiangtao/my-image/raw/master/netty/1533727621475.png" alt="1533727621475"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ByteBuf byteBuf = ...</span><br><span class="line">ByteBuf header = byteBuf.slice(<span class="number">0</span>, <span class="number">5</span>);</span><br><span class="line">ByteBuf body = byteBuf.slice(<span class="number">5</span>, <span class="number">10</span>);</span><br></pre></td></tr></table></figure>
+<h4 id="4-2-4-通过-wrap-操作实现零拷贝-包装"><a href="#4-2-4-通过-wrap-操作实现零拷贝-包装" class="headerlink" title="4.2.4 通过 wrap 操作实现零拷贝(包装)"></a>4.2.4 通过 wrap 操作实现零拷贝(包装)</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">byte</span>[] bytes = ...</span><br><span class="line">ByteBuf byteBuf = Unpooled.buffer();</span><br><span class="line">byteBuf.writeBytes(bytes);</span><br><span class="line"></span><br><span class="line"><span class="comment">//Netty</span></span><br><span class="line"><span class="keyword">byte</span>[] bytes = ...</span><br><span class="line">ByteBuf byteBuf = Unpooled.wrappedBuffer(bytes);</span><br></pre></td></tr></table></figure>
+<h4 id="4-2-5-通过FileRegion文件通道传输"><a href="#4-2-5-通过FileRegion文件通道传输" class="headerlink" title="4.2.5 通过FileRegion文件通道传输"></a>4.2.5 通过<code>FileRegion</code>文件通道传输</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//传统io</span></span><br><span class="line"><span class="keyword">byte</span>[] temp = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];</span><br><span class="line">FileInputStream in = <span class="keyword">new</span> FileInputStream(srcFile);</span><br><span class="line">FileOutputStream out = <span class="keyword">new</span> FileOutputStream(destFile);</span><br><span class="line"><span class="keyword">int</span> length;</span><br><span class="line"><span class="keyword">while</span> ((length = in.read(temp)) != -<span class="number">1</span>) &#123;</span><br><span class="line">    out.write(temp, <span class="number">0</span>, length);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">//netty</span></span><br><span class="line">RandomAccessFile srcFile = <span class="keyword">new</span> RandomAccessFile(srcFileName, <span class="string">"r"</span>);</span><br><span class="line">FileChannel srcFileChannel = srcFile.getChannel();</span><br><span class="line"></span><br><span class="line">RandomAccessFile destFile = <span class="keyword">new</span> RandomAccessFile(destFileName, <span class="string">"rw"</span>);</span><br><span class="line">FileChannel destFileChannel = destFile.getChannel();</span><br><span class="line"></span><br><span class="line"><span class="keyword">long</span> position = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">long</span> count = srcFileChannel.size();</span><br><span class="line">srcFileChannel.transferTo(position, count, destFileChannel);</span><br></pre></td></tr></table></figure>
+<h3 id="4-3-内存池的使用"><a href="#4-3-内存池的使用" class="headerlink" title="4.3 内存池的使用"></a>4.3 内存池的使用</h3><p><img src="https://gitee.com/qianjiangtao/my-image/raw/master/netty/3751588-ef0937cfe9e39b2d.png" alt="153378434576"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">PoolChunkList&lt;T&gt; qInit：存储内存利用率<span class="number">0</span>-<span class="number">25</span>%的chunk</span><br><span class="line">PoolChunkList&lt;T&gt; q000：存储内存利用率<span class="number">1</span>-<span class="number">50</span>%的chunk</span><br><span class="line">PoolChunkList&lt;T&gt; q025：存储内存利用率<span class="number">25</span>-<span class="number">75</span>%的chunk</span><br><span class="line">PoolChunkList&lt;T&gt; q050：存储内存利用率<span class="number">50</span>-<span class="number">100</span>%的chunk</span><br><span class="line">PoolChunkList&lt;T&gt; q075：存储内存利用率<span class="number">75</span>-<span class="number">100</span>%的chunk</span><br><span class="line">PoolChunkList&lt;T&gt; q100：存储内存利用率<span class="number">100</span>%的chunk</span><br></pre></td></tr></table></figure>
+<p><code>PoolArena</code>中申请内存: </p>
+<ul>
+<li><p>对于小于pageSize大小的内存，会在<code>tinySubpagePools</code>或s<code>mallSubpagePools</code>中分配，<code>tinySubpagePools</code>用于分配小于512字节的内存，<code>smallSubpagePools</code>用于分配大于512小于pageSize的内存。</p>
+</li>
+<li><p>对于大于pageSize小于chunkSize大小的内存，会在PoolChunkList的Chunk中分配。</p>
+</li>
+<li><p>对于大于<code>chunkSize</code>大小的内存，直接创建非池化Chunk来分配内存，并且该Chunk不会放在内存池中重用。</p>
+</li>
+</ul>
+<h3 id="4-4-无锁化的串行设计理念"><a href="#4-4-无锁化的串行设计理念" class="headerlink" title="4.4.无锁化的串行设计理念"></a>4.4.无锁化的串行设计理念</h3><blockquote>
+<p>为了尽可能提升性能，Netty采用了串行无锁化设计，在IO线程内部进行串行操作，避免多线程竞争导致的性能下降。表面上看，串行化设计似乎CPU利用率不高，并发程度不够。但是，通过调整NIO线程池的线程参数，可以同时启动多个串行化的线程并行运行，这种局部无锁化的串行线程设计相比一个队列-多个工作线程模型性能更优 </p>
+</blockquote>
+<p><img src="https://gitee.com/qianjiangtao/my-image/raw/master/netty/1533784434576.png" alt="1533784434576"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Netty的NioEventLoop读取到消息之后，直接调用ChannelPipeline的fireChannelRead(Object msg)，只要用户不主动切换线程，一直会由NioEventLoop调用到用户的Handler，期间不进行线程切换，这种串行化处理方式避免了多线程操作导致的锁的竞争，从性能角度看是最优的。</span><br></pre></td></tr></table></figure>
+<h3 id="4-5-高性能的序列化框架"><a href="#4-5-高性能的序列化框架" class="headerlink" title="4.5 高性能的序列化框架"></a>4.5 高性能的序列化框架</h3><blockquote>
+<p>Netty默认提供了对Google Protobuf的支持，通过扩展Netty的编解码接口，用户可以实现其它的高性能序列化框架 </p>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+      <div>
+        <ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>本文作者：</strong>
+    qianjiangtao
+  </li>
+  <li class="post-copyright-link">
+    <strong>本文链接：</strong>
+    <a href="https://qianjiangtao.github.io/2018/08/20/从Blocking-IO到Netty/" title="从Blocking IO到Netty">https://qianjiangtao.github.io/2018/08/20/从Blocking-IO到Netty/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>
+    本博客所有文章除特别声明外，均采用 <a href="https://qianjiangtao.github.io/" rel="external nofollow" target="_blank">CC BY-NC-SA 3.0</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+
+      </div>
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Netty/" rel="tag"># Netty</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/08/21/一.Docker安装/" rel="prev" title="一.Docker安装">
+                一.Docker安装 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        
+  <div class="bdsharebuttonbox">
+    <a href="#" class="bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+    <a href="#" class="bds_douban" data-cmd="douban" title="分享到豆瓣网"></a>
+    <a href="#" class="bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
+    <a href="#" class="bds_qzone" data-cmd="qzone" title="分享到QQ空间"></a>
+    <a href="#" class="bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+    <a href="#" class="bds_tieba" data-cmd="tieba" title="分享到百度贴吧"></a>
+    <a href="#" class="bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+    <a href="#" class="bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+    <a href="#" class="bds_more" data-cmd="more"></a>
+    <a class="bds_count" data-cmd="count"></a>
+  </div>
+  <script>
+    window._bd_share_config = {
+      "common": {
+        "bdText": "",
+        "bdMini": "2",
+        "bdMiniList": false,
+        "bdPic": ""
+      },
+      "share": {
+        "bdSize": "16",
+        "bdStyle": "0"
+      },
+      "image": {
+        "viewList": ["tsina", "douban", "sqq", "qzone", "weixin", "twi", "fbook"],
+        "viewText": "分享到：",
+        "viewSize": "16"
+      }
+    }
+  </script>
+
+<script>
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/0U1422448-2.jpg"
+                alt="qianjiangtao" />
+            
+              <p class="site-author-name" itemprop="name">qianjiangtao</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">10</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/yourname" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://plus.google.com/yourname" target="_blank" title="Google">
+                      
+                        <i class="fa fa-fw fa-google"></i>Google</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://stackoverflow.com/yourname" target="_blank" title="StackOverflow">
+                      
+                        <i class="fa fa-fw fa-stack-overflow"></i>StackOverflow</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://legacy.gitbook.com/explore" target="_blank" title="GitBook">
+                      
+                        <i class="fa fa-fw fa-asterisk"></i>GitBook</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-globe"></i>
+                推荐博客
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.ityouknow.com/spring-cloud.html" title="纯洁的微笑" target="_blank">纯洁的微笑</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://mp.weixin.qq.com/s/4-JLI3QvwFQgJ_gEFI_51w" title="程序员DD" target="_blank">程序员DD</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://tengj.top/" title="嘟嘟独立博客" target="_blank">嘟嘟独立博客</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://www.hollischuang.com/" title="Hollis" target="_blank">Hollis</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://xujin.org/" title="许进沉思录" target="_blank">许进沉思录</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="http://tech.lede.com/" title="网易乐得技术团队" target="_blank">网易乐得技术团队</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#一-Java-Blocking-I-O"><span class="nav-number">1.</span> <span class="nav-text">一. Java Blocking I/O</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二-Java-NO-Blocking-I-O-or-New-I-O"><span class="nav-number">2.</span> <span class="nav-text">二. Java NO Blocking I/O or New I/O</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#三-Java-Netty"><span class="nav-number">3.</span> <span class="nav-text">三. Java Netty</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#3-1-Netty基于服务端例子"><span class="nav-number">3.1.</span> <span class="nav-text">3.1 Netty基于服务端例子</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#3-2-Netty核心组件"><span class="nav-number">3.2.</span> <span class="nav-text">3.2 Netty核心组件</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-1Bootstrap-和-ServerBootstrap"><span class="nav-number">3.2.1.</span> <span class="nav-text">3.2.1Bootstrap 和 ServerBootstrap</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-2-EventLoopGroup"><span class="nav-number">3.2.2.</span> <span class="nav-text">3.2.2 EventLoopGroup</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-3-EventLoop"><span class="nav-number">3.2.3.</span> <span class="nav-text">3.2.3 EventLoop</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-2-4-Channel，ChannelHandler，ChannelPipeline，ChannelHandlerContext"><span class="nav-number">3.2.4.</span> <span class="nav-text">3.2.4 Channel，ChannelHandler，ChannelPipeline，ChannelHandlerContext</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#四-高性能Netty"><span class="nav-number">4.</span> <span class="nav-text">四.高性能Netty</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#4-1-非阻塞事件驱动框架"><span class="nav-number">4.1.</span> <span class="nav-text">4.1.非阻塞事件驱动框架</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-2-零拷贝"><span class="nav-number">4.2.</span> <span class="nav-text">4.2 零拷贝</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-2-聚合零拷贝"><span class="nav-number">4.2.1.</span> <span class="nav-text">4.2.2 聚合零拷贝</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-3-通过CompositeByteBuf-实现零拷贝（分解）"><span class="nav-number">4.2.2.</span> <span class="nav-text">4.2.3 通过CompositeByteBuf 实现零拷贝（分解）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-4-通过-wrap-操作实现零拷贝-包装"><span class="nav-number">4.2.3.</span> <span class="nav-text">4.2.4 通过 wrap 操作实现零拷贝(包装)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#4-2-5-通过FileRegion文件通道传输"><span class="nav-number">4.2.4.</span> <span class="nav-text">4.2.5 通过FileRegion文件通道传输</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-3-内存池的使用"><span class="nav-number">4.3.</span> <span class="nav-text">4.3 内存池的使用</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-4-无锁化的串行设计理念"><span class="nav-number">4.4.</span> <span class="nav-text">4.4.无锁化的串行设计理念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#4-5-高性能的序列化框架"><span class="nav-number">4.5.</span> <span class="nav-text">4.5 高性能的序列化框架</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; 2018 &mdash; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">qianjiangtao</span>
+
+  
+</div>
+
+
+
+
+
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="true"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+  
+	<script type="text/javascript" src="//cdn.bootcss.com/canvas-nest.js/1.0.0/canvas-nest.min.js"></script>
+  
+</body>
+</html>
